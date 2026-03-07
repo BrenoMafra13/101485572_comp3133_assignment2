@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
+import { TitleCasePipe } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { GraphqlApiService } from '../../core/graphql-api';
@@ -40,7 +41,7 @@ type SearchEmployeesQueryResponse = {
 
 @Component({
   selector: 'app-employee-list',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, TitleCasePipe],
   templateUrl: './employee-list.html',
   styleUrl: './employee-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

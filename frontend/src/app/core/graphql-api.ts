@@ -1,6 +1,14 @@
 import { Injectable, inject } from '@angular/core';
 import { SessionService } from './session';
 
+declare global {
+  interface Window {
+    __env?: {
+      GRAPHQL_URL?: string;
+    };
+  }
+}
+
 type GraphqlResponse<T> = {
   data?: T;
   errors?: Array<{ message: string }>;
@@ -11,7 +19,15 @@ type GraphqlResponse<T> = {
 })
 export class GraphqlApiService {
   private readonly sessionService = inject(SessionService);
-  private readonly graphqlUrl = 'http://localhost:5001/graphql';
+  private readonly graphqlUrl = this.resolveGraphqlUrl();
+
+  private resolveGraphqlUrl(): string {
+    const runtimeUrl = window.__env?.GRAPHQL_URL?.trim();
+    if (runtimeUrl && runtimeUrl.length > 0) {
+      return runtimeUrl;
+    }
+    return 'http://localhost:5001/graphql';
+  }
 
   async request<T>(query: string, variables: Record<string, unknown> = {}, withAuth = false): Promise<T> {
     const headers: Record<string, string> = {

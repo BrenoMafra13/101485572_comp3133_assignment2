@@ -5,6 +5,7 @@
     "ng": "ng",
     "start": "ng serve --host 0.0.0.0 --port 3000",
     "build": "ng build",
+    "start:railway": "node scripts/write-env.mjs && serve -s dist/101485572_comp3133_assignment2/browser -l $PORT",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
@@ -18,6 +19,7 @@
     "@angular/platform-browser": "^21.2.0",
     "@angular/router": "^21.2.0",
     "rxjs": "~7.8.0",
+    "serve": "^14.2.4",
     "tslib": "^2.3.0"
   },
   "devDependencies": {

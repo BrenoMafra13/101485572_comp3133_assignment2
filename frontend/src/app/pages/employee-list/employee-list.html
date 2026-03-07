@@ -114,11 +114,11 @@
 			</div>
 
 			<div class="details-grid">
-				<p><strong>First Name:</strong> {{ selectedEmployee()?.firstName }}</p>
-				<p><strong>Last Name:</strong> {{ selectedEmployee()?.lastName }}</p>
+				<p><strong>First Name:</strong> {{ selectedEmployee()?.firstName | titlecase }}</p>
+				<p><strong>Last Name:</strong> {{ selectedEmployee()?.lastName | titlecase }}</p>
 				<p><strong>Email:</strong> {{ selectedEmployee()?.email }}</p>
-				<p><strong>Department:</strong> {{ selectedEmployee()?.department }}</p>
-				<p><strong>Position:</strong> {{ selectedEmployee()?.position }}</p>
+				<p><strong>Department:</strong> {{ selectedEmployee()?.department | titlecase }}</p>
+				<p><strong>Position:</strong> {{ selectedEmployee()?.position | titlecase }}</p>
 			</div>
 
 			@if (selectedEmployee()?.profilePicture) {
@@ -162,11 +162,11 @@
 								<span>-</span>
 							}
 						</td>
-						<td>{{ employee.firstName }}</td>
-						<td>{{ employee.lastName }}</td>
+						<td>{{ employee.firstName | titlecase }}</td>
+						<td>{{ employee.lastName | titlecase }}</td>
 						<td>{{ employee.email }}</td>
-						<td>{{ employee.department }}</td>
-						<td>{{ employee.position }}</td>
+						<td>{{ employee.department | titlecase }}</td>
+						<td>{{ employee.position | titlecase }}</td>
 						<td>
 							<div class="row-actions">
 								<button type="button" class="btn-secondary" (click)="viewEmployee(employee.id)">View</button>
