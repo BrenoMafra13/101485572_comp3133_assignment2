@@ -1,8 +1,131 @@
 <section class="page">
 	<header class="topbar">
 		<h1>Employee List</h1>
-		<button type="button" (click)="logout()">Logout</button>
+		<div class="topbar-actions">
+			<button type="button" class="btn-primary" (click)="openAddForm()">Add Employee</button>
+			<button type="button" class="btn-outline" (click)="logout()">Logout</button>
+		</div>
 	</header>
+
+	<section class="search-panel">
+		<form [formGroup]="searchForm" (ngSubmit)="searchEmployees()" class="search-form">
+			<div class="field-block">
+				<label for="searchDepartment">Department</label>
+				<input id="searchDepartment" type="text" formControlName="department" placeholder="e.g. Engineering" />
+			</div>
+
+			<div class="field-block">
+				<label for="searchPosition">Position</label>
+				<input id="searchPosition" type="text" formControlName="position" placeholder="e.g. Developer" />
+			</div>
+
+			<div class="search-actions">
+				<button type="submit" class="btn-primary">Search</button>
+				<button type="button" class="btn-secondary" (click)="clearSearch()">Reset</button>
+			</div>
+		</form>
+	</section>
+
+	@if (formVisible()) {
+		<section class="panel form-panel">
+			<h2>@if (formMode() === 'add') {<span>Add Employee</span>} @else {<span>Update Employee</span>}</h2>
+
+			<form [formGroup]="employeeForm" (ngSubmit)="saveEmployee()" class="employee-form" novalidate>
+				<div class="field-block">
+					<label for="firstName">First Name</label>
+					<input id="firstName" type="text" formControlName="firstName" />
+					@if ((employeeForm.controls.firstName.touched || formSubmitted()) && employeeForm.controls.firstName.errors?.['required']) {
+						<p class="error-text">First name is required.</p>
+					}
+				</div>
+
+				<div class="field-block">
+					<label for="lastName">Last Name</label>
+					<input id="lastName" type="text" formControlName="lastName" />
+					@if ((employeeForm.controls.lastName.touched || formSubmitted()) && employeeForm.controls.lastName.errors?.['required']) {
+						<p class="error-text">Last name is required.</p>
+					}
+				</div>
+
+				<div class="field-block">
+					<label for="email">Email</label>
+					<input id="email" type="email" formControlName="email" />
+					@if ((employeeForm.controls.email.touched || formSubmitted()) && employeeForm.controls.email.errors?.['required']) {
+						<p class="error-text">Email is required.</p>
+					}
+					@if ((employeeForm.controls.email.touched || formSubmitted()) && employeeForm.controls.email.errors?.['email']) {
+						<p class="error-text">Enter a valid email address.</p>
+					}
+				</div>
+
+				<div class="field-block">
+					<label for="department">Department</label>
+					<input id="department" type="text" formControlName="department" />
+					@if ((employeeForm.controls.department.touched || formSubmitted()) && employeeForm.controls.department.errors?.['required']) {
+						<p class="error-text">Department is required.</p>
+					}
+				</div>
+
+				<div class="field-block">
+					<label for="position">Position</label>
+					<input id="position" type="text" formControlName="position" />
+					@if ((employeeForm.controls.position.touched || formSubmitted()) && employeeForm.controls.position.errors?.['required']) {
+						<p class="error-text">Position is required.</p>
+					}
+				</div>
+
+				<div class="field-block">
+					<label for="profilePicture">Profile Picture</label>
+					<input id="profilePicture" type="file" accept="image/*" (change)="onProfilePictureSelected($event)" />
+					@if ((employeeForm.controls.profilePicture.touched || formSubmitted()) && employeeForm.controls.profilePicture.errors?.['required']) {
+						<p class="error-text">Profile picture is required.</p>
+					}
+				</div>
+
+				@if (employeeForm.controls.profilePicture.value) {
+					<div class="preview-wrap">
+						<img class="preview-image" [src]="employeeForm.controls.profilePicture.value" alt="Profile preview" />
+					</div>
+				}
+
+				@if (actionError()) {
+					<p class="error-text">{{ actionError() }}</p>
+				}
+
+				<div class="form-actions">
+					<button type="submit" class="btn-primary" [disabled]="isSubmitting()">
+						@if (isSubmitting()) {
+							<span>Saving...</span>
+						} @else {
+							<span>Save</span>
+						}
+					</button>
+					<button type="button" class="btn-secondary" (click)="closeForm()">Cancel</button>
+				</div>
+			</form>
+		</section>
+	}
+
+	@if (selectedEmployee()) {
+		<section class="panel details-panel">
+			<div class="details-head">
+				<h2>Employee Details</h2>
+				<button type="button" class="btn-secondary" (click)="closeDetails()">Close</button>
+			</div>
+
+			<div class="details-grid">
+				<p><strong>First Name:</strong> {{ selectedEmployee()?.firstName }}</p>
+				<p><strong>Last Name:</strong> {{ selectedEmployee()?.lastName }}</p>
+				<p><strong>Email:</strong> {{ selectedEmployee()?.email }}</p>
+				<p><strong>Department:</strong> {{ selectedEmployee()?.department }}</p>
+				<p><strong>Position:</strong> {{ selectedEmployee()?.position }}</p>
+			</div>
+
+			@if (selectedEmployee()?.profilePicture) {
+				<img class="details-image" [src]="selectedEmployee()?.profilePicture" alt="Employee photo" />
+			}
+		</section>
+	}
 
 	@if (loading()) {
 		<p class="state-text">Loading employees...</p>
@@ -12,25 +135,49 @@
 		<p class="state-text error-text">{{ loadError() }}</p>
 	}
 
+	@if (actionError() && !formVisible()) {
+		<p class="state-text error-text">{{ actionError() }}</p>
+	}
+
 	<div class="table-wrap">
 		<table>
 			<thead>
 				<tr>
+					<th>Photo</th>
 					<th>First Name</th>
 					<th>Last Name</th>
 					<th>Email</th>
 					<th>Department</th>
 					<th>Position</th>
+					<th>Actions</th>
 				</tr>
 			</thead>
 			<tbody>
 				@for (employee of employees(); track employee.id) {
 					<tr>
+						<td>
+							@if (employee.profilePicture) {
+								<img class="table-photo" [src]="employee.profilePicture" alt="Employee photo" />
+							} @else {
+								<span>-</span>
+							}
+						</td>
 						<td>{{ employee.firstName }}</td>
 						<td>{{ employee.lastName }}</td>
 						<td>{{ employee.email }}</td>
 						<td>{{ employee.department }}</td>
 						<td>{{ employee.position }}</td>
+						<td>
+							<div class="row-actions">
+								<button type="button" class="btn-secondary" (click)="viewEmployee(employee.id)">View</button>
+								<button type="button" class="btn-secondary" (click)="openEditForm(employee)">Update</button>
+								<button type="button" class="btn-danger" (click)="deleteEmployee(employee.id)">Delete</button>
+							</div>
+						</td>
+					</tr>
+				} @empty {
+					<tr>
+						<td colspan="7">No employees found.</td>
 					</tr>
 				}
 			</tbody>
