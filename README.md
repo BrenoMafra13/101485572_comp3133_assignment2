@@ -1,12 +1,19 @@
-# 101485572Comp3133Assignment2
+# 101485572_comp3133_assignment2
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.1.
+This repository uses a Docker-friendly structure:
+
+- `frontend/`: Angular application
+- `backend/`: backend service (placeholder for now)
+- `docker-compose.yml`: service orchestration
+
+The Angular app was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.1.
 
 ## Development server
 
 To start a local development server, run:
 
 ```bash
+cd frontend
 ng serve
 ```
 
@@ -31,6 +38,7 @@ ng generate --help
 To build the project run:
 
 ```bash
+cd frontend
 ng build
 ```
 
@@ -41,6 +49,7 @@ This will compile your project and store the build artifacts in the `dist/` dire
 To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
 
 ```bash
+cd frontend
 ng test
 ```
 
