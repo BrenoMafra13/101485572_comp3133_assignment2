@@ -41,7 +41,17 @@
 				<p class="error-text">Passwords do not match.</p>
 			}
 
-			<button type="submit">Create Account</button>
+			@if (apiError()) {
+				<p class="error-text">{{ apiError() }}</p>
+			}
+
+			<button type="submit" [disabled]="isSubmitting()">
+				@if (isSubmitting()) {
+					<span>Creating account...</span>
+				} @else {
+					<span>Create Account</span>
+				}
+			</button>
 		</form>
 
 		<p class="auth-link-row">

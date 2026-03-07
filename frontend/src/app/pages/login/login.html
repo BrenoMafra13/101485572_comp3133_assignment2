@@ -22,7 +22,17 @@
 				<p class="error-text">Password must be at least 6 characters.</p>
 			}
 
-			<button type="submit">Login</button>
+			@if (apiError()) {
+				<p class="error-text">{{ apiError() }}</p>
+			}
+
+			<button type="submit" [disabled]="isSubmitting()">
+				@if (isSubmitting()) {
+					<span>Signing in...</span>
+				} @else {
+					<span>Login</span>
+				}
+			</button>
 		</form>
 
 		<p class="auth-link-row">

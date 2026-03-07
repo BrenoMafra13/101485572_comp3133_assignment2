@@ -8,6 +8,13 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { GraphqlApiService } from '../../core/graphql-api';
+
+type SignupMutationResponse = {
+  signup: {
+    id: string;
+  };
+};
 
 function passwordsMatchValidator(control: AbstractControl): ValidationErrors | null {
   const password = control.get('password')?.value;
@@ -24,7 +31,10 @@ function passwordsMatchValidator(control: AbstractControl): ValidationErrors | n
 })
 export class Signup {
   private readonly router = inject(Router);
+  private readonly graphqlApiService = inject(GraphqlApiService);
   readonly submitted = signal(false);
+  readonly apiError = signal('');
+  readonly isSubmitting = signal(false);
 
   readonly form = new FormGroup(
     {
@@ -52,14 +62,41 @@ export class Signup {
     { validators: passwordsMatchValidator },
   );
 
-  submit(): void {
+  async submit(): Promise<void> {
     this.submitted.set(true);
+    this.apiError.set('');
 
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
 
-    this.router.navigate(['/login']);
+    this.isSubmitting.set(true);
+
+    try {
+      await this.graphqlApiService.request<SignupMutationResponse>(
+        `
+          mutation Signup($input: SignupInput!) {
+            signup(input: $input) {
+              id
+            }
+          }
+        `,
+        {
+          input: {
+            firstName: this.form.controls.firstName.value,
+            lastName: this.form.controls.lastName.value,
+            email: this.form.controls.email.value,
+            password: this.form.controls.password.value,
+          },
+        },
+      );
+
+      await this.router.navigate(['/login']);
+    } catch (error) {
+      this.apiError.set(error instanceof Error ? error.message : 'Unable to create account');
+    } finally {
+      this.isSubmitting.set(false);
+    }
   }
 }

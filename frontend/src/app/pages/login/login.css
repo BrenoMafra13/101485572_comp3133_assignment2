@@ -74,6 +74,11 @@ button:hover {
 	background: var(--accent-soft-dark);
 }
 
+button:disabled {
+	opacity: 0.7;
+	cursor: not-allowed;
+}
+
 .error-text {
 	margin: 6px 0 0;
 	color: var(--danger-soft);
