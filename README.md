@@ -29,5 +29,5 @@ docker compose up --build -d
 
 ## Test User (for validation)
 
-- Email: testuser101485572@mail.com
-- Password: Password123
+- Email: test@gmail.com
+- Password: 123456
