@@ -1,0 +1,52 @@
+<section class="auth-page">
+	<div class="auth-card">
+		<h1>Signup</h1>
+		<form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+			<label for="firstName">First Name</label>
+			<input id="firstName" type="text" formControlName="firstName" />
+			@if ((form.controls.firstName.touched || submitted()) && form.controls.firstName.errors?.['required']) {
+				<p class="error-text">First name is required.</p>
+			}
+
+			<label for="lastName">Last Name</label>
+			<input id="lastName" type="text" formControlName="lastName" />
+			@if ((form.controls.lastName.touched || submitted()) && form.controls.lastName.errors?.['required']) {
+				<p class="error-text">Last name is required.</p>
+			}
+
+			<label for="email">Email</label>
+			<input id="email" type="email" formControlName="email" />
+			@if ((form.controls.email.touched || submitted()) && form.controls.email.errors?.['required']) {
+				<p class="error-text">Email is required.</p>
+			}
+			@if ((form.controls.email.touched || submitted()) && form.controls.email.errors?.['email']) {
+				<p class="error-text">Enter a valid email address.</p>
+			}
+
+			<label for="password">Password</label>
+			<input id="password" type="password" formControlName="password" />
+			@if ((form.controls.password.touched || submitted()) && form.controls.password.errors?.['required']) {
+				<p class="error-text">Password is required.</p>
+			}
+			@if ((form.controls.password.touched || submitted()) && form.controls.password.errors?.['minlength']) {
+				<p class="error-text">Password must be at least 6 characters.</p>
+			}
+
+			<label for="confirmPassword">Confirm Password</label>
+			<input id="confirmPassword" type="password" formControlName="confirmPassword" />
+			@if ((form.controls.confirmPassword.touched || submitted()) && form.controls.confirmPassword.errors?.['required']) {
+				<p class="error-text">Confirm password is required.</p>
+			}
+			@if ((form.touched || submitted()) && form.errors?.['passwordMismatch']) {
+				<p class="error-text">Passwords do not match.</p>
+			}
+
+			<button type="submit">Create Account</button>
+		</form>
+
+		<p class="auth-link-row">
+			Already have an account?
+			<a routerLink="/login">Go to login</a>
+		</p>
+	</div>
+</section>
