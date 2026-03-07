@@ -1,22 +1,42 @@
+version: '3'
 services:
   frontend:
-    image: node:20-alpine
-    working_dir: /app
-    command: sh -c "npm install && npm run start -- --host 0.0.0.0 --port 4200"
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
     ports:
-      - "4200:4200"
-    volumes:
-      - ./frontend:/app
-      - frontend_node_modules:/app/node_modules
+      - '3000:3000'
+    depends_on:
+      - backend
+    environment:
+      - ANGULAR_APP_BACKEND_URL=http://backend:5000
 
   backend:
-    image: node:20-alpine
-    working_dir: /app
-    command: sh -c "echo 'Backend placeholder ready in /app' && tail -f /dev/null"
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - '5000:5000'
+    depends_on:
+      - mongodb
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/mydatabase
+
+  mongodb:
+    image: mongo
+    ports:
+      - '27017:27017'
     volumes:
-      - ./backend:/app
+      - mongo-data:/data/db
+
+  mongo-express:
+    image: mongo-express:latest
+    ports:
+      - '8081:8081'
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+    depends_on:
+      - mongodb
 
 volumes:
-  frontend_node_modules:
+  mongo-data:
